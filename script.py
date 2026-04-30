@@ -2,6 +2,7 @@ import requests
 import os
 from dotenv import load_dotenv
 import time
+import csv
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -37,5 +38,32 @@ while 'next_url' in data:
     tickers.extend(data["results"])
     
 print(len(tickers))
+
+example_ticker = {
+    "ticker": "ZYME",
+    "name": "Zymeworks Inc.",
+    "market": "stocks",
+    "locale": "us",
+    "primary_exchange": "XNAS",
+    "type": "CS",
+    "active": True,
+    "currency_name": "usd",
+    "cik": "0001937653",
+    "composite_figi": "BBG019XSYC89",
+    "share_class_figi": "BBG019XSYC98",
+    "last_updated_utc": "2026-04-29T06:09:42.02927038Z",
+}
+
+fieldnames = example_ticker.keys()
+output_file = "tickers.csv"
+
+with open(output_file, mode='w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    for ticker in tickers:
+        row = {field: ticker.get(field, "") for field in fieldnames}
+        writer.writerow(row)
+
+print(f'Wrote {len(tickers)} rows to {output_file}')
 
 
